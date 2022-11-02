@@ -29,3 +29,10 @@ func TableSet(table *tablewriter.Table) *tablewriter.Table {
 
 	return table
 }
+
+
+type CmdMetaData struct {
+	Use string
+	Short string
+	Example string
+}

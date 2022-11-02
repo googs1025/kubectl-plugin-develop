@@ -13,7 +13,7 @@ import (
 )
 
 
-func PodRunCmd(cmd *cobra.Command, args []string) error {
+func PodRunCmd(cmd *cobra.Command,args []string) error {
 
 	client := initClient.InitClient()
 	ns, err := cmd.Flags().GetString("namespace")
@@ -36,8 +36,8 @@ func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error
 	ctx := context.Background()
 
 	podList, err := client.CoreV1().Pods(namespace).List(ctx, v1.ListOptions{
-		LabelSelector: Labels,
-		FieldSelector: Fields,
+		LabelSelector: common.Labels,
+		FieldSelector: common.Fields,
 	})
 	if err != nil {
 		log.Println(err)
@@ -48,7 +48,7 @@ func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error
 	table := tablewriter.NewWriter(os.Stdout)
 	content := []string{"POD名称", "Namespace", "POD IP", "状态"}
 
-	if ShowLabels {
+	if common.ShowLabels {
 		content = append(content, "标签")
 	}
 	table.SetHeader(content)
@@ -60,7 +60,7 @@ func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error
 	for _, pod := range podList.Items {
 		podRow := []string{pod.Name, pod.Namespace, pod.Status.PodIP, string(pod.Status.Phase)}
 
-		if ShowLabels {
+		if common.ShowLabels {
 			podRow = append(podRow, common.MapToString(pod.Labels))
 		}
 		table.Append(podRow)
