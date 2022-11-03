@@ -1,6 +1,6 @@
 # kubectl-plugin-develop
 ## 对kubectl进行简易插件化开发
-
+![](https://github.com/googs1025/kubectl-plugin-develop/blob/main/image/kubectl-ice.png?ram=true)
 ### 1. 本地编译
 ```bigquery
 本地编译
