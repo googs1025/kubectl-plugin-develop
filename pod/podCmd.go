@@ -13,23 +13,23 @@ import (
 )
 
 
-func PodRunCmd(cmd *cobra.Command,args []string) error {
-
-	client := initClient.InitClient()
-	ns, err := cmd.Flags().GetString("namespace")
-	if err != nil {
-		return err
-	}
-	if ns == "" {
-		ns = "default"
-	}
-	err = ListPodsWithNamespace(client, ns)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+//func PodRunCmd(cmd *cobra.Command,args []string) error {
+//
+//	client := initClient.InitClient()
+//	ns, err := cmd.Flags().GetString("namespace")
+//	if err != nil {
+//		return err
+//	}
+//	if ns == "" {
+//		ns = "default"
+//	}
+//	err = ListPodsWithNamespace(client, ns)
+//	if err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}
 
 
 func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error {
@@ -71,4 +71,28 @@ func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error
 	table.Render()
 
 	return nil
+}
+
+var podListCmd = &cobra.Command{
+	Use:          "list",
+	Short:        "list pods ",
+	Example:      "kubectl pods list [flags]",
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client := initClient.InitClient()
+		ns, err := cmd.Flags().GetString("namespace")
+
+		if err != nil {
+			return err
+		}
+		if ns == "" {
+			ns = "default"
+		}
+		err = ListPodsWithNamespace(client, ns)
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+
 }
