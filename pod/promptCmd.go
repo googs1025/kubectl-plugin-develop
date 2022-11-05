@@ -30,6 +30,9 @@ func executorCmd(cmd *cobra.Command) func(in string) {
 			if err != nil {
 				log.Fatalln(err)
 			}
+		case "get":
+			//getPodDetail(args, cmd)
+			runtea(args, cmd)
 		}
 	}
 
@@ -64,7 +67,7 @@ var promptCmd = &cobra.Command{
 func getPodsList() (ret []prompt.Suggest) {
 	podList, err := fact.Core().V1().Pods().Lister().
 		Pods("default").List(labels.Everything())
-	if err != nil{
+	if err != nil {
 		return
 	}
 	for _, pod := range podList{
@@ -83,7 +86,7 @@ func completer(in prompt.Document) []prompt.Suggest {
 	}
 	cmd, opt := parseCmd(in.TextBeforeCursor())	// 解析
 	if cmd == "get" {
-		return prompt.FilterHasPrefix(getPodsList(),opt, true)
+		return prompt.FilterHasPrefix(getPodsList(), opt, true)
 	}
 	return prompt.FilterHasPrefix(suggestions, w, true)
 }
@@ -93,7 +96,7 @@ func parseCmd(w string) (string, string) {
 	w = regexp.MustCompile("\\s+").ReplaceAllString(w," ")
 	l := strings.Split(w," ")
 	if len(l) >= 2 {
-		return l[0],strings.Join(l[1:]," ")
+		return l[0], strings.Join(l[1:]," ")
 	}
 	return w, ""
 }
