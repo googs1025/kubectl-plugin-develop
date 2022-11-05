@@ -3,6 +3,8 @@ package common
 import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
+	corev1 "k8s.io/api/core/v1"
+	"os"
 )
 
 func MapToString(m map[string]string) (res string) {
@@ -35,4 +37,20 @@ type CmdMetaData struct {
 	Use string
 	Short string
 	Example string
+}
+
+var eventHeaders=[]string{"事件类型", "REASON", "所属对象","消息"}
+
+func PrintEvent(events []*corev1.Event){
+	table := tablewriter.NewWriter(os.Stdout)
+	//设置头
+	table.SetHeader(eventHeaders)
+	for _,e:=range events {
+		podRow:=[]string{e.Type,e.Reason,
+			fmt.Sprintf("%s/%s",e.InvolvedObject.Kind,e.InvolvedObject.Name),e.Message}
+
+		table.Append(podRow)
+	}
+	table = TableSet(table)
+	table.Render()
 }

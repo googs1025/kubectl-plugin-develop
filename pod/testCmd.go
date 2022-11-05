@@ -27,7 +27,7 @@ var testCmd= &cobra.Command{
 		}
 
 		pod, err := client.CoreV1().Pods(ns).Get(context.Background(),
-			"mygott-5ffcccbc86-kt6wm",v1.GetOptions{})
+			"hello-world-68fdbf5747-w789w",v1.GetOptions{})
 		jsonStr, _ := json.Marshal(pod)
 
 		ret := gjson.Get(string(jsonStr),"@this")

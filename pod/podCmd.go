@@ -6,7 +6,9 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/kubernetes"
 	"kubectl_plugin_develop/common"
@@ -132,6 +134,7 @@ func getPodDetail(args []string, cmd *cobra.Command){
 
 }
 
+
 func getPodDetailByJSON(podName,path string,cmd *cobra.Command){
 	ns,err:=cmd.Flags().GetString("namespace")
 	if err!=nil{
@@ -145,6 +148,37 @@ func getPodDetailByJSON(podName,path string,cmd *cobra.Command){
 		log.Println(err)
 		return
 	}
+
+	if path == PodEventType{ //代表 是取 POD事件
+		eventsList, err := fact.Core().V1().Events().Lister().List(labels.Everything())
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		podEvents := []*corev1.Event{}
+		for _, e := range eventsList {
+			if e.InvolvedObject.UID == pod.UID {
+				podEvents = append(podEvents, e)
+			}
+		}
+		common.PrintEvent(podEvents)
+		return
+	}
+
+	//获取日志
+	if path==PodLogType{
+		client := initClient.InitClient()
+		req:=client.CoreV1().Pods(ns).GetLogs(pod.Name,&corev1.PodLogOptions{})	// PodLogOptions可以做设置
+		ret:=req.Do(context.Background())
+		b,err:= ret.Raw()
+		if err!=nil{
+			log.Println(err)
+			return
+		}
+		fmt.Println(string(b))
+		return
+	}
+
 	jsonStr,_:=json.Marshal(pod)
 	ret:=gjson.Get(string(jsonStr),path)
 	if !ret.Exists(){

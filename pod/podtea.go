@@ -56,11 +56,14 @@ func (m podmodel) View() string {
 	return s
 }
 
-//本课程来自 程序员在囧途(www.jtthink.com) 咨询群：98514334
+const (
+	PodEventType = "__event__"
+	PodLogType="__log__"
 
-//本课程来自 程序员在囧途(www.jtthink.com) 咨询群：98514334
+)
+
 func runtea(args []string,cmd *cobra.Command)  {
-	if len(args)==0{
+	if len(args) == 0 {
 		log.Println("podname is required")
 		return
 	}
@@ -72,7 +75,14 @@ func runtea(args []string,cmd *cobra.Command)  {
 	//v1.Pod{}
 	podModel.items=append(podModel.items,
 		&podjson{title:"元信息", path: "metadata"},
+		&podjson{title: "标签", path: "metadata.labels"},
+		&podjson{title: "注解", path: "metadata.annotations"},
+		&podjson{title: "容器列表", path: "spec.containers"},
+		&podjson{title: "上级依赖资源", path: "metadata.ownerReferences"},
 		&podjson{title:"全部", path: "@this"},
+		//下方的内容和 POD本身的yaml/json内容 无关
+		&podjson{title:"*事件*", path: PodEventType},
+		&podjson{title:"*日志*", path: PodLogType},
 	)
 	teaCmd := tea.NewProgram(podModel)
 	if err := teaCmd.Start(); err != nil {

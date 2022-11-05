@@ -28,14 +28,14 @@ func RunCmd() {
 		SilenceUsage: true,
 	}
 	// 合并主命令的参数
-	initClient.MergeFlags(cmd, podListCmd, promptCmd)
+	initClient.MergeFlags(cmd, podListCmd, promptCmd, testCmd)
 	// 加入子命令参数
 
 	// 用来支持输入命令行
 	podListCmd.Flags().BoolVar(&common.ShowLabels,"show-labels",false,"kubectl pods --show-labels")
 	podListCmd.Flags().StringVar(&common.Labels,"labels","","kubectl pods --labels app=ngx or kubectl pods --labels=\"app=ngx,version=v1\"")
 	podListCmd.Flags().StringVar(&common.Fields,"fields","","kubectl pods --fields=\"status.phase=Running\"")
-	cmd.AddCommand(podListCmd, promptCmd)
+	cmd.AddCommand(podListCmd, promptCmd, testCmd)
 	err := cmd.Execute()
 	if err != nil {
 		log.Fatalln(err)
