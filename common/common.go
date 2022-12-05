@@ -39,14 +39,14 @@ type CmdMetaData struct {
 	Example string
 }
 
-var eventHeaders=[]string{"事件类型", "REASON", "所属对象","消息"}
+var eventHeaders = []string{"事件类型", "REASON", "所属对象","消息"}
 
 func PrintEvent(events []*corev1.Event){
 	table := tablewriter.NewWriter(os.Stdout)
 	//设置头
 	table.SetHeader(eventHeaders)
-	for _,e:=range events {
-		podRow:=[]string{e.Type,e.Reason,
+	for _, e := range events {
+		podRow := []string{e.Type,e.Reason,
 			fmt.Sprintf("%s/%s",e.InvolvedObject.Kind,e.InvolvedObject.Name),e.Message}
 
 		table.Append(podRow)

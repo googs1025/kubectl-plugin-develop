@@ -41,7 +41,7 @@ func ListAndWatchPodsWithNamespace(namespace string) error {
 }
 
 
-var cacheCmd= &cobra.Command{
+var cacheCmd = &cobra.Command{
 	Use:          "cache",
 	Short:        "pods by cache",
 	Hidden:true,

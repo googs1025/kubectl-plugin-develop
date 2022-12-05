@@ -12,7 +12,7 @@ import (
 )
 
 //做测试用， 无需纠结
-var testCmd= &cobra.Command{
+var testCmd = &cobra.Command{
 	Use:          "test",
 	Short:        "test",
 	Hidden:true,

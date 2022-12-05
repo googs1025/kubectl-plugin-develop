@@ -81,7 +81,7 @@ func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error
 
 var podListCmd = &cobra.Command{
 	Use:          "list",
-	Short:        "list pods ",
+	Short:        "list pods",
 	Example:      "kubectl pods list [flags]",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {

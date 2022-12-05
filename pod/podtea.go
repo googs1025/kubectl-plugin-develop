@@ -73,7 +73,7 @@ func runtea(args []string,cmd *cobra.Command)  {
 		podName: args[0],
 	}
 	//v1.Pod{}
-	podModel.items=append(podModel.items,
+	podModel.items = append(podModel.items,
 		&podjson{title:"元信息", path: "metadata"},
 		&podjson{title: "标签", path: "metadata.labels"},
 		&podjson{title: "注解", path: "metadata.annotations"},

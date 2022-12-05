@@ -1,4 +1,11 @@
 # kubectl-plugin-develop
+## 基本方法
+```
+1. 写个可执行程序(先执行chmod +x xxxx)，并放到PATH目录下。  
+2. 文件名必须是kubectl-xxxx
+3. 放入/local/bin下
+3、kubectl plugin list    ---验证一下
+```
 ## 对kubectl进行简易插件化开发
 ![](https://github.com/googs1025/kubectl-plugin-develop/blob/main/image/kubectl-ice.png?ram=true)
 ### 1. 本地编译
