@@ -1,4 +1,8 @@
-# kubectl-plugin-develop
+## kubectl-插件开发
+本项目为主要开发**pod**与**deployment**项目。
+
+子项目在目录：kubectl-plugin-develop/test_plugin/
+子项目是对常见资源的list操作开发。
 ## 基本方法
 ```
 1. 写个可执行程序(先执行chmod +x xxxx)，并放到PATH目录下。  
@@ -53,6 +57,3 @@ status.podIP
 status.podIPs
 status.nominatedNodeName
 ```
-
-### 未来支持
-**未来预计支持service deployment job等常用资源的命令**
