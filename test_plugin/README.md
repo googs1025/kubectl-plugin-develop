@@ -1,21 +1,32 @@
 ### cobra简易插件常见的k8s资源(练习)
 ## 目前支持list资源
 ```bigquery
+工作负载
 pods
 deployments
+statefulsets
+daemonsets
 jobs
+cronjobs
+
+服务发现
 services
-configmaps
 ingress
+
+配置管理
+configmaps
+secret
 ```
 
 ## 测试
 ```bigquery
 进入test_plugin目录
-➜  test_plugin git:(main) ✗ go run . pods                     
-POD名称                                 NAMESPACE       POD IP          状态    
-patch-deployment-66b6c48dd5-4r2pr       default         172.17.0.6      Running 
-➜  test_plugin git:(main) ✗
+➜  test_plugin git:(main) ✗ go run . pods                  
++-----------------------------------+-----------+------------+---------+--------+--------------+
+|              POD名称              | NAMESPACE |   POD IP   |  状态   | 容器名 |   容器镜像   |
++-----------------------------------+-----------+------------+---------+--------+--------------+
+| patch-deployment-66b6c48dd5-4r2pr | default   | 172.17.0.6 | Running | nginx  | nginx:1.14.2 |
++-----------------------------------+-----------+------------+---------+--------+--------------+
 ```
 
 ## 部署

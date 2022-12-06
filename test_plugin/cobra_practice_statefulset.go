@@ -13,15 +13,15 @@ import (
 	"strconv"
 )
 
-var DeploymentCmd = &cobra.Command{}
+var StatefulsetCmd = &cobra.Command{}
 
-func DeploymentCommand() *cobra.Command {
+func StatefulsetCommand() *cobra.Command {
 	client := initClient.InitClient()
 
-	DeploymentCmd = &cobra.Command{
-		Use:          "deployments [flags]",
-		Short:        "list deployments",
-		Example:      "kubectl deployments [flags]",
+	StatefulsetCmd = &cobra.Command{
+		Use:          "statefulsets [flags]",
+		Short:        "list statefulsets",
+		Example:      "kubectl statefulsets [flags]",
 		SilenceUsage: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			ns, err := c.Flags().GetString("namespace")
@@ -31,7 +31,7 @@ func DeploymentCommand() *cobra.Command {
 			if ns == "" {
 				ns = "default"
 			}
-			err = ListDeploymentsWithNamespace(client, ns)
+			err = ListStatefulsetsWithNamespace(client, ns)
 			if err != nil {
 				return err
 			}
@@ -39,15 +39,15 @@ func DeploymentCommand() *cobra.Command {
 		},
 	}
 
-	return DeploymentCmd
+	return StatefulsetCmd
 
 
 }
 
-func ListDeploymentsWithNamespace(client *kubernetes.Clientset, namespace string) error {
+func ListStatefulsetsWithNamespace(client *kubernetes.Clientset, namespace string) error {
 	ctx := context.Background()
 
-	deploymentList, err := client.AppsV1().Deployments(namespace).List(ctx, v1.ListOptions{
+	statefulsetList, err := client.AppsV1().StatefulSets(namespace).List(ctx, v1.ListOptions{
 		LabelSelector: common.Labels,
 		FieldSelector: common.Fields,
 	})
@@ -57,7 +57,7 @@ func ListDeploymentsWithNamespace(client *kubernetes.Clientset, namespace string
 	}
 	// 表格化呈现
 	table := tablewriter.NewWriter(os.Stdout)
-	content := []string{"Deployment名称", "Namespace", "副本数", "Available副本数", "Ready副本数"}
+	content := []string{"Statefulset名称", "Namespace", "副本数", "Available副本数", "Ready副本数"}
 
 	if common.ShowLabels {
 		content = append(content, "标签")
@@ -69,17 +69,17 @@ func ListDeploymentsWithNamespace(client *kubernetes.Clientset, namespace string
 	table.SetHeader(content)
 
 
-	for _, deployment := range deploymentList.Items {
-		deploymentRow := []string{deployment.Name, deployment.Namespace, strconv.Itoa(int(deployment.Status.Replicas)), strconv.Itoa(int(deployment.Status.AvailableReplicas)), strconv.Itoa(int(deployment.Status.ReadyReplicas))}
+	for _, statefulset := range statefulsetList.Items {
+		statefulsetRow := []string{statefulset.Name, statefulset.Namespace, strconv.Itoa(int(statefulset.Status.Replicas)), strconv.Itoa(int(statefulset.Status.AvailableReplicas)), strconv.Itoa(int(statefulset.Status.ReadyReplicas))}
 		if common.ShowLabels {
-			deploymentRow = append(deploymentRow, common.LabelsMapToString(deployment.Labels))
+			statefulsetRow = append(statefulsetRow, common.LabelsMapToString(statefulset.Labels))
 		}
 		if common.ShowAnnotations {
-			deploymentRow = append(deploymentRow, common.AnnotationsMapToString(deployment.Annotations))
+			statefulsetRow = append(statefulsetRow, common.AnnotationsMapToString(statefulset.Annotations))
 		}
 
 
-		table.Append(deploymentRow)
+		table.Append(statefulsetRow)
 	}
 	// 去掉表格线
 	//table = common.TableSet(table)

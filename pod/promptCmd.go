@@ -62,7 +62,7 @@ var suggestions = []prompt.Suggest{
 	{"clear", "清除屏幕"},
 }
 
-var MyConsoleWriter=  prompt.NewStdoutWriter()  //定义一个自己的writer
+var MyConsoleWriter = prompt.NewStdoutWriter()  //定义一个自己的writer
 
 
 var promptCmd = &cobra.Command{

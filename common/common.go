@@ -7,10 +7,18 @@ import (
 	"os"
 )
 
-func MapToString(m map[string]string) (res string) {
+func LabelsMapToString(m map[string]string) (res string) {
 
 	for k, v := range m {
-		res += fmt.Sprintf("%s=%s \n", k, v)
+		res += fmt.Sprintf("%s=%s,", k, v)
+	}
+	return
+}
+
+func AnnotationsMapToString(m map[string]string) (res string) {
+
+	for k, v := range m {
+		res += fmt.Sprintf("%s=%s, ", k, v)
 	}
 	return
 }

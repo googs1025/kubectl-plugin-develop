@@ -13,15 +13,15 @@ import (
 	"strconv"
 )
 
-var DeploymentCmd = &cobra.Command{}
+var SecretCmd = &cobra.Command{}
 
-func DeploymentCommand() *cobra.Command {
+func SecretCommand() *cobra.Command {
 	client := initClient.InitClient()
 
-	DeploymentCmd = &cobra.Command{
-		Use:          "deployments [flags]",
-		Short:        "list deployments",
-		Example:      "kubectl deployments [flags]",
+	SecretCmd = &cobra.Command{
+		Use:          "secrets [flags]",
+		Short:        "list secrets",
+		Example:      "kubectl secrets [flags]",
 		SilenceUsage: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			ns, err := c.Flags().GetString("namespace")
@@ -31,7 +31,8 @@ func DeploymentCommand() *cobra.Command {
 			if ns == "" {
 				ns = "default"
 			}
-			err = ListDeploymentsWithNamespace(client, ns)
+
+			err = ListSecretsWithNamespace(client, ns)
 			if err != nil {
 				return err
 			}
@@ -39,15 +40,15 @@ func DeploymentCommand() *cobra.Command {
 		},
 	}
 
-	return DeploymentCmd
+	return SecretCmd
 
 
 }
 
-func ListDeploymentsWithNamespace(client *kubernetes.Clientset, namespace string) error {
+func ListSecretsWithNamespace(client *kubernetes.Clientset, namespace string) error {
 	ctx := context.Background()
 
-	deploymentList, err := client.AppsV1().Deployments(namespace).List(ctx, v1.ListOptions{
+	secretList, err := client.CoreV1().Secrets(namespace).List(ctx, v1.ListOptions{
 		LabelSelector: common.Labels,
 		FieldSelector: common.Fields,
 	})
@@ -57,7 +58,7 @@ func ListDeploymentsWithNamespace(client *kubernetes.Clientset, namespace string
 	}
 	// 表格化呈现
 	table := tablewriter.NewWriter(os.Stdout)
-	content := []string{"Deployment名称", "Namespace", "副本数", "Available副本数", "Ready副本数"}
+	content := []string{"Secret名称", "Namespace", "Data个数", "Secret类型"}
 
 	if common.ShowLabels {
 		content = append(content, "标签")
@@ -69,17 +70,17 @@ func ListDeploymentsWithNamespace(client *kubernetes.Clientset, namespace string
 	table.SetHeader(content)
 
 
-	for _, deployment := range deploymentList.Items {
-		deploymentRow := []string{deployment.Name, deployment.Namespace, strconv.Itoa(int(deployment.Status.Replicas)), strconv.Itoa(int(deployment.Status.AvailableReplicas)), strconv.Itoa(int(deployment.Status.ReadyReplicas))}
+	for _, secret := range secretList.Items {
+		secretRow := []string{secret.Name, secret.Namespace, strconv.Itoa(len(secret.Data)), string(secret.Type)}
 		if common.ShowLabels {
-			deploymentRow = append(deploymentRow, common.LabelsMapToString(deployment.Labels))
+			secretRow = append(secretRow, common.LabelsMapToString(secret.Labels))
 		}
 		if common.ShowAnnotations {
-			deploymentRow = append(deploymentRow, common.AnnotationsMapToString(deployment.Annotations))
+			secretRow = append(secretRow, common.AnnotationsMapToString(secret.Annotations))
 		}
 
 
-		table.Append(deploymentRow)
+		table.Append(secretRow)
 	}
 	// 去掉表格线
 	//table = common.TableSet(table)
@@ -90,4 +91,5 @@ func ListDeploymentsWithNamespace(client *kubernetes.Clientset, namespace string
 
 
 }
+
 

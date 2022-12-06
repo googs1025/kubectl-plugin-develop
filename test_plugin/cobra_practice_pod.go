@@ -38,6 +38,8 @@ func PodCommand() *cobra.Command {
 		},
 	}
 
+
+
 	return PodCmd
 
 
@@ -47,26 +49,42 @@ func PodCommand() *cobra.Command {
 func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error {
 	ctx := context.Background()
 
-	podList, err := client.CoreV1().Pods(namespace).List(ctx, v1.ListOptions{})
+	podList, err := client.CoreV1().Pods(namespace).List(ctx, v1.ListOptions{
+		LabelSelector: common.Labels,
+		FieldSelector: common.Fields,
+	})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 	// 表格化呈现
 	table := tablewriter.NewWriter(os.Stdout)
-	content := []string{"POD名称", "Namespace", "POD IP", "状态"}
+	content := []string{"POD名称", "Namespace", "POD IP", "状态", "容器名", "容器镜像"}
 
+	if common.ShowLabels {
+		content = append(content, "标签")
+	}
+	if common.ShowAnnotations {
+		content = append(content, "Annotations")
+	}
 
 	table.SetHeader(content)
 
 
 	for _, pod := range podList.Items {
-		podRow := []string{pod.Name, pod.Namespace, pod.Status.PodIP, string(pod.Status.Phase)}
+		podRow := []string{pod.Name, pod.Namespace, pod.Status.PodIP, string(pod.Status.Phase), pod.Spec.Containers[0].Name, pod.Spec.Containers[0].Image}
+		if common.ShowLabels {
+			podRow = append(podRow, common.LabelsMapToString(pod.Labels))
+		}
+		if common.ShowAnnotations {
+			podRow = append(podRow, common.AnnotationsMapToString(pod.Annotations))
+		}
+
 
 		table.Append(podRow)
 	}
 	// 去掉表格线
-	table = common.TableSet(table)
+	//table = common.TableSet(table)
 
 	table.Render()
 

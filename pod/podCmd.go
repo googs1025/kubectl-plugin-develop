@@ -67,7 +67,7 @@ func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error
 		podRow := []string{pod.Name, pod.Namespace, pod.Status.PodIP, string(pod.Status.Phase)}
 
 		if common.ShowLabels {
-			podRow = append(podRow, common.MapToString(pod.Labels))
+			podRow = append(podRow, common.LabelsMapToString(pod.Labels))
 		}
 		table.Append(podRow)
 	}
