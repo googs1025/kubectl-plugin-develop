@@ -2,20 +2,24 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/client-go/kubernetes"
+	"kubectl_plugin_develop/common"
 	"kubectl_plugin_develop/initClient"
 	"log"
+	"os"
 )
 
-func main() {
+var PodCmd = &cobra.Command{}
+
+func PodCommand() *cobra.Command {
 	client := initClient.InitClient()
 
-	cmd := &cobra.Command{
-		Use:          "kubectl pods [flags]",
-		Short:        "list pods ",
+	PodCmd = &cobra.Command{
+		Use:          "pods [flags]",
+		Short:        "list pods",
 		Example:      "kubectl pods [flags]",
 		SilenceUsage: true,
 		RunE: func(c *cobra.Command, args []string) error {
@@ -26,29 +30,48 @@ func main() {
 			if ns == "" {
 				ns = "default"
 			}
-			list, err := client.CoreV1().Pods(ns).List(context.Background(), v1.ListOptions{})
+			err = ListPodsWithNamespace(client, ns)
 			if err != nil {
 				return err
-			}
-			for _, pod := range list.Items {
-				fmt.Println(pod.Name)
 			}
 			return nil
 		},
 	}
 
-	MergeFlags(cmd)
+	return PodCmd
 
-	err := cmd.Execute()
 
+}
+
+
+func ListPodsWithNamespace(client *kubernetes.Clientset, namespace string) error {
+	ctx := context.Background()
+
+	podList, err := client.CoreV1().Pods(namespace).List(ctx, v1.ListOptions{})
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
+		return err
 	}
+	// 表格化呈现
+	table := tablewriter.NewWriter(os.Stdout)
+	content := []string{"POD名称", "Namespace", "POD IP", "状态"}
+
+
+	table.SetHeader(content)
+
+
+	for _, pod := range podList.Items {
+		podRow := []string{pod.Name, pod.Namespace, pod.Status.PodIP, string(pod.Status.Phase)}
+
+		table.Append(podRow)
+	}
+	// 去掉表格线
+	table = common.TableSet(table)
+
+	table.Render()
+
+	return nil
+
+
 }
 
-var cfgFlags *genericclioptions.ConfigFlags
-
-func MergeFlags(cmd *cobra.Command) {
-	cfgFlags = genericclioptions.NewConfigFlags(true)
-	cfgFlags.AddFlags(cmd.Flags())
-}
