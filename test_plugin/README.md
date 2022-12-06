@@ -1,4 +1,4 @@
-### cobra简易插件常见的k8s资源(练习)
+### cobra实现kubectl插件开发，list拉起常见的k8s资源
 ## 目前支持list资源
 ```bigquery
 工作负载
