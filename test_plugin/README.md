@@ -38,11 +38,12 @@ mv kubectl-list ~/go/bin/ (放入任意一个bin目录下即可)
 ```
 
 ```bigquery
-➜  bin kubectl list pods  
-POD名称                                 NAMESPACE       POD IP          状态    
-patch-deployment-66b6c48dd5-4r2pr       default         172.17.0.6      Running 
-➜  bin kubectl list deployments
-patch-deployment
+➜  kubectl_plugin_develop git:(main) kubectl list deployments                 
++------------------+-----------+--------+-----------------+-------------+
+|  DEPLOYMENT名称  | NAMESPACE | 副本数 | AVAILABLE副本数 | READY副本数 |
++------------------+-----------+--------+-----------------+-------------+
+| patch-deployment | default   |      1 |               1 |           1 |
++------------------+-----------+--------+-----------------+-------------+
 ```
 
 
